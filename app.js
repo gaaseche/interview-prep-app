@@ -1,84 +1,72 @@
-// Sample questions data
-const questions = {
-    background: [
-        {
-            id: 1,
-            text: "Please tell me why you would be a good fit for this role."
-        },
-        {
-            id: 2,
-            text: "Can you please tell me a bit about yourself?"
-        },
-        {
-            id: 3,
-            text: "Please tell me about some of your strengths and weaknesses."
-        }
-    ],
-    situational: [
-        {
-            id: 1,
-            text: "Tell me about a time when you delivered results despite a challenging environment or context. What was the situation, what was your goal, and what were the results?"
-        },
-        {
-            id: 2,
-            text: "Tell me about a time when you had to develop a new skill. How did you approach the learning process?"
-        },
-        {
-            id: 3,
-            text: "Describe a situation when you disagreed with someone at work. What did you do, and what was the result?"
-        }
-    ]
-};
+let flashcards = [];
 
-// Initialize the app
-function initApp() {
-    loadQuestions('background');
-    loadQuestions('situational');
+// Load flashcards from localStorage
+function loadFlashcards() {
+    const saved = localStorage.getItem('interviewFlashcards');
+    if (saved) {
+        flashcards = JSON.parse(saved);
+        displayFlashcards();
+    }
 }
 
-// Load questions into the DOM
-function loadQuestions(category) {
-    const container = document.getElementById(category);
-    container.innerHTML = ''; // Clear existing content
+// Save flashcards to localStorage
+function saveFlashcards() {
+    localStorage.setItem('interviewFlashcards', JSON.stringify(flashcards));
+}
+
+function addFlashcard() {
+    const question = document.getElementById('question').value.trim();
+    const answer = document.getElementById('answer').value.trim();
     
-    questions[category].forEach(question => {
-        const card = createQuestionCard(question);
-        container.appendChild(card);
-    });
+    if (question && answer) {
+        flashcards.push({ question, answer });
+        saveFlashcards();
+        displayFlashcards();
+        
+        // Clear inputs
+        document.getElementById('question').value = '';
+        document.getElementById('answer').value = '';
+    }
 }
 
-// Create a question card element
-function createQuestionCard(question) {
-    const div = document.createElement('div');
-    div.className = 'question-card';
-    div.innerHTML = `
-        <p class="question-text">${question.text}</p>
-        <button class="practice-button" onclick="toggleAnswer(this)">Practice Answer</button>
-    `;
-    return div;
-}
-
-// Show selected tab
-function showTab(clickedTab, tabName) {
-    // Update tabs
-    document.querySelectorAll('.tab').forEach(tab => {
-        tab.classList.remove('active');
-    });
-    clickedTab.classList.add('active');
+function displayFlashcards() {
+    const container = document.getElementById('flashcards');
+    container.innerHTML = '';
     
-    // Update content
-    document.querySelectorAll('.tab-content').forEach(content => {
-        content.classList.remove('active');
+    flashcards.forEach((card, index) => {
+        const div = document.createElement('div');
+        div.className = 'flashcard';
+        div.innerHTML = `
+            <div class="flashcard-question">${card.question}</div>
+            <div class="flashcard-answer">${card.answer}</div>
+            <button onclick="deleteFlashcard(${index})" class="button" style="margin-top: 10px;">Delete</button>
+        `;
+        div.onclick = function(e) {
+            if (e.target.tagName !== 'BUTTON') {
+                this.classList.toggle('flipped');
+            }
+        };
+        container.appendChild(div);
     });
-    document.getElementById(tabName).classList.add('active');
 }
 
-// Toggle answer state
-function toggleAnswer(button) {
-    const card = button.closest('.question-card');
-    card.classList.toggle('answered');
-    button.textContent = card.classList.contains('answered') ? 'Practice Again' : 'Practice Answer';
+function deleteFlashcard(index) {
+    flashcards.splice(index, 1);
+    saveFlashcards();
+    displayFlashcards();
 }
 
-// Initialize when page loads
-window.onload = initApp;
+function showAll() {
+    document.querySelectorAll('.flashcard').forEach(card => {
+        card.classList.add('flipped');
+    });
+}
+
+function hideAll() {
+    document.querySelectorAll('.flashcard').forEach(card => {
+        card.classList.remove('flipped');
+    });
+}
+
+// Load flashcards when page loads
+window.onload = loadFlashcards;
