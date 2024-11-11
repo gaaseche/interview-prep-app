@@ -3,26 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interview Warmup</title>
+    <title>Interview Prep Flashcards</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="header">
-        <h1>Interview Warmup</h1>
+        <h1>George's Interview Prep Flashcards</h1>
     </div>
 
-    <div class="tabs">
-        <button class="tab active" onclick="showTab(this, 'background')">Background</button>
-        <button class="tab" onclick="showTab(this, 'situational')">Situational</button>
+    <div class="add-question">
+        <h2>Add New Question</h2>
+        <div class="input-group">
+            <label for="question">Question:</label>
+            <textarea id="question" rows="2"></textarea>
+        </div>
+        <div class="input-group">
+            <label for="answer">Answer/Notes:</label>
+            <textarea id="answer" rows="3"></textarea>
+        </div>
+        <button onclick="addFlashcard()" class="button">Add Flashcard</button>
     </div>
 
-    <div id="background" class="tab-content active">
-        <!-- Background questions will be loaded here -->
+    <div class="controls">
+        <button onclick="showAll()" class="button">Show All Answers</button>
+        <button onclick="hideAll()" class="button">Hide All Answers</button>
     </div>
 
-    <div id="situational" class="tab-content">
-        <!-- Situational questions will be loaded here -->
-    </div>
+    <div id="flashcards"></div>
 
     <script src="app.js"></script>
 </body>
